@@ -47,6 +47,7 @@ def estimate_distance(object_center, image_width):
         distance_cm = (focal_length * object_width) / object_width_pixels
         return distance_cm
     return None
+
 def stereo_camera():
     camera = cv2.VideoCapture(0)
 

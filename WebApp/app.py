@@ -12,8 +12,9 @@ def camera_matrix():
     return camera_matrix_calculation.calculate()
 
 @app.route('/integral_image_feed')
-def integral_image():
-    return integral_image_feed.compute()
+def calculate_integral_image():
+    integral_image.calculate_integral_image()
+    return render_template('integral_image_result.html', image_path="static/integral_image.jpg")
 
 @app.route('/image_stitching')
 def image_stitch():
