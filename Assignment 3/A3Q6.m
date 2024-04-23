@@ -4,7 +4,6 @@ object_types = {'spoon', 'fork', 'butter_knife', 'cutting_knife', 'ladle'};
 
 % Step 2: Collect Dataset
 dataset_dir = '/Users/renugak/ComputerVision/Assignment 3/bow';  % Full path to directory containing subfolders for each object type
-object_types = {'spoon', 'fork', 'butter_knife', 'cutting_knife', 'ladle'};
 
 image_paths = {};
 labels = {};
@@ -18,42 +17,47 @@ for i = 1:numel(object_types)
     end
 end
 
+% Create ImageDatastore from image paths
+imds = imageDatastore(image_paths);
+
 % Step 3: Preprocess Images
 target_size = [100, 100];
 preprocessed_images = cell(numel(image_paths), 1);
 for i = 1:numel(image_paths)
     try
-        % Read image information
-        info = imfinfo(image_paths{i});
-        disp(info);  % Display image information
-        
         % Read image
-        image = imread(image_paths{i});
+        image = readimage(imds, i);
         if isempty(image)
             error('Empty image: %s', image_paths{i});
         end
+        % Convert to grayscale
+        image = rgb2gray(image);
+        % Resize image
         image = imresize(image, target_size);
-        image = rgb2gray(image);  % Convert to grayscale
         preprocessed_images{i} = image;
     catch ME
-        fprintf('Error reading image file: %s\n', image_paths{i});
+        fprintf('Error reading or preprocessing image file: %s\n', image_paths{i});
         rethrow(ME);
     end
 end
 
+% Convert cell array of preprocessed images to numeric array
+num_images = numel(preprocessed_images);
+image_size = size(preprocessed_images{1});
+numeric_images = zeros([image_size, num_images], 'uint8');
+for i = 1:num_images
+    numeric_images(:,:,i) = preprocessed_images{i};
+end
+
 % Step 4: Feature Extraction and Building Visual Vocabulary
-% Create an imageSet object from the image paths
-imds = imageSet('/Users/renugak/ComputerVision/Assignment 3/bow', 'recursive');
 % Create bag of features
 bag = bagOfFeatures(imds);
 
 % Step 5: Feature Representation
-features = encode(bag, preprocessed_images);
+% Encode features using the bag of features
+features = encode(bag, numeric_images);
 
 % Step 6: Train Classifier
-classifier = fitcecoc(features, labels);
-
-% Step 7: Evaluate Performance
 % Split data into training and testing sets
 cv = cvpartition(labels, 'Holdout', 0.2);
 train_idx = training(cv);
@@ -67,6 +71,7 @@ y_test = labels(test_idx);
 % Train classifier
 classifier = fitcecoc(X_train, y_train);
 
+% Step 7: Evaluate Performance
 % Predict labels for test set
 y_pred = predict(classifier, X_test);
 
