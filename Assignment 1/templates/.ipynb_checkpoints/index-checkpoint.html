@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Matrix Calculation</title>
+</head>
+<body>
+    <h1>Camera Matrix Calculation Results</h1>
+    <h2>Real-world dimensions:</h2>
+    <p>Point 1:</p>
+    <ul>
+        <li>x axis length: {{ real_dim_p1[0][0] }}</li>
+        <li>y axis length: {{ real_dim_p1[1][0] }}</li>
+        <li>z axis length: {{ real_dim_p1[2][0] }}</li>
+    </ul>
+    <p>Point 2:</p>
+    <ul>
+        <li>x axis length: {{ real_dim_p2[0][0] }}</li>
+        <li>y axis length: {{ real_dim_p2[1][0] }}</li>
+        <li>z axis length: {{ real_dim_p2[2][0] }}</li>
+    </ul>
+    <h2>Distance between the points: {{ dist*100 }} cm</h2>
+</body>
+</html>
